@@ -6,6 +6,11 @@
 # https://www.reddit.com/r/PleX/comments/8vuhan/think_ive_found_a_cache_bug_large_cache_directory
 # https://forums.plex.tv/t/plex-server-cache-over-310gb/274438/10
 #
+# Authors:
+# Shawn Bruce				 	- https://github.com/kantlivelong
+# SB Tech Services	(www.sbts.com.au)	- https://github.com/sbts
+#
+#
 
 read -rst5 phototranscoder_path < <( readlink -f "$1"; )
 
@@ -53,29 +58,29 @@ CreateTempfiles() {
 
 
 GenerateFileList() {
-    echo "Generating list of files (part 1)...  (Unsorted)"
+    echo "Generating list of files (part 1)..."
     while read -rst240 Ts Sum Name ; do
         printf '%s %s %s\n' "$Sum" "$Ts" "$Name" >> $tmpfilelistp1
     done < <( find "${phototranscoder_path}" -type f -printf "%C@\t" -exec md5sum "{}" \; )
 
-    echo "Generating list of files (part 2)...  (Sorted)"
+    echo "Generating list of files (part 2)..."
     sort -o $tmpfilelistp2 $tmpfilelistp1
 }
 
 DeDuplicate() {
-    echo "Symlinking duplicates to originals...  (Sorted)"
+    echo "Symlinking duplicates to originals..."
 
     while read -rst5 cur_hash cur_ts cur_file; do
 
         if [[ "${cur_hash}" == "${first_hash}" ]]; then
-            echo "      DUPE : ${cur_hash} - ${cur_file}"
+            echo "     \tDUPE : ${cur_hash} - ${cur_file}"
             rm "${cur_file}"
             ln -s "${first_file}" "${cur_file}"
             chown --reference="${first_file}" "${cur_file}"
         else
             first_hash=$cur_hash
             first_file=$cur_file
-            echo -e "\n===== ORIG : ${first_hash} - ${first_file}"
+            echo -e "=====\tORIG : ${first_hash} - ${first_file}"
         fi
 
     done < $tmpfilelistp2
