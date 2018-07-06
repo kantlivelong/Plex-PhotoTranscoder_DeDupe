@@ -73,9 +73,8 @@ DeDuplicate() {
     while read -rst5 cur_hash cur_ts cur_file; do
 
         if [[ "${cur_hash}" == "${first_hash}" ]]; then
-            echo "     \tDUPE : ${cur_hash} - ${cur_file}"
-            rm "${cur_file}"
-            ln -s "${first_file}" "${cur_file}"
+            echo -e "     \tDUPE : ${cur_hash} - ${cur_file}"
+            ln -sf "${first_file}" "${cur_file}"
             chown --reference="${first_file}" "${cur_file}"
         else
             first_hash=$cur_hash
