@@ -9,7 +9,7 @@ __USAGE__: generate-test-files.sh [--auto]
 
 
 
-## dedup-new.sh
+## plex_phototranscoder_dedupe.sh
 
 __USAGE__: dedup-new.sh /path/to/files
   - creates a list of all files on the supplied path with their timestamp and md5sum
